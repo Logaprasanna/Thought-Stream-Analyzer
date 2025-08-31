@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychic Journal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .entries {
+            margin-top: 30px;
+        }
+        .entry {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #4CAF50;
+        }
+        .entry-meta {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 Psychic Journal</h1>
+        
+        <!-- Entry form -->
+        <div>
+            <textarea id="entryText" placeholder="What's on your mind? Dreams, thoughts, insights..."></textarea>
+            <br>
+            <select id="categorySelect">
+                <option value="journal">Journal</option>
+                <option value="dream">Dream</option>
+                <option value="thought">Thought</option>
+                <option value="insight">Insight</option>
+            </select>
+            <button onclick="saveEntry()">Save Entry</button>
+        </div>
+
+        <!-- Display entries -->
+        <div class="entries">
+            <h2>Your Entries</h2>
+            <div id="entriesList">Loading entries...</div>
+        </div>
+    </div>
+
+    <script>
+        // API base URL
+        const API_URL = 'http://localhost:8000/api';
+
+        // Save a new entry
+        async function saveEntry() {
+            const content = document.getElementById('entryText').value;
+            const category = document.getElementById('categorySelect').value;
+            
+            if (!content.trim()) {
+                alert('Please enter some content!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/entries`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        content: content,
+                        category: category
+                    })
+                });
+
+                if (response.ok) {
+                    document.getElementById('entryText').value = ''; // Clear the text box
+                    loadEntries(); // Refresh the list
+                    alert('Entry saved!');
+                } else {
+                    alert('Error saving entry');
+                }
+            } catch (error) {
+                alert('Error connecting to server. Is your backend running?');
+            }
+        }
+
+        // Load all entries
+        async function loadEntries() {
+            try {
+                const response = await fetch(`${API_URL}/entries`);
+                const data = await response.json();
+                
+                const entriesList = document.getElementById('entriesList');
+                
+                if (data.entries.length === 0) {
+                    entriesList.innerHTML = '<p>No entries yet. Start writing!</p>';
+                    return;
+                }
+
+                entriesList.innerHTML = data.entries.map(entry => `
+                    <div class="entry">
+                        <div class="entry-meta">
+                            ${entry.category.toUpperCase()} • ${new Date(entry.timestamp).toLocaleString()}
+                        </div>
+                        <div>${entry.content}</div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                document.getElementById('entriesList').innerHTML = 
+                    '<p>Error loading entries. Make sure your backend is running!</p>';
+            }
+        }
+
+        // Load entries when page loads
+        window.onload = function() {
+            loadEntries();
+        };
+    </script>
+</body>
+</html>

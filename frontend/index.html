@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport", content="width=device-width, initial-scale=1.0">
+        <style>
+        body{
+          font-family: Arial, Sans-Serif;
+          max-width: 500px;
+          margin: 20px;
+          padding: 20px;
+          background-color: white;
+        }
+        textarea{
+          width: 100%;
+          height: 100px;
+          margin-bottom: 20px;
+          color: black;
+          font-size: 16px;
+        }
+        button{
+          background-color: green;
+          font-family: Arial, Sans-Serif;
+          color: white;
+          font-size: 12px;
+          padding: 12px;
+          margin-left: 20px;
+          border-radius: 10px;
+        }
+        button:hover{
+          background-color: black;
+        }
+        #categorySelect{
+          padding: 10px;
+          font-family: Arial, Sans-Serif;
+          font-size: 13px;
+        }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Psychic Journal</h1>
+            <div>
+                <textarea id="entryText" placeholder="Type in your thoughts, fantasy, dreams..."></textarea>
+                <br>
+                <select id="categorySelect">
+                    <option value = "journal">Journal</option>
+                    <option value="dreams">Dreams</option>
+                    <option value="fantasies">Fantasies</option>
+                    <option value="insights">Insights</option>
+                </select>
+                <button onclick="saveEntry()">Save Entry</button>
+            </div>
+            <div class="Entries"> 
+                <h2>Your Entries</h2>
+                <div id = "entries_list">Loading Entries...</div>
+            </div>
+        </div>
+    <script>
+        const API_URL = "http://localhost:8000/api"
+
+        async function saveEntry(){
+            
+            const content = document.getElementById("entryText").value;
+            const category = document.getElementById("categorySelect").value;
+
+            if(!content.trim()){
+                alert("Write something to proceed")
+                return;
+            }
+            try{
+            const response = await fetch(`${API_URL}/entries`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        content: content,
+                        category: category
+                    })
+                }
+            );
+
+            if(response.ok){
+                document.getElementById("entryText").value = ""
+                loadEntry()
+                alert("Message Saved")
+            }else{
+                alery("Problem occured. Message not saved")
+            }
+        }catch(error){
+            alert("Trouble saving your message!!")
+        }
+        }
+
+        async function loadEntry(){
+            const entryList = document.getElementById("entries_list")
+            try{
+            const response = await fetch(`${API_URL}/entries`);
+            const data = await response.json()
+
+            
+
+            if(data.entries.length == 0){
+                entryList.innerHTML = `
+                <p> Entry is empty. Write something...</p>`;
+                return;
+            }
+
+         entryList.innerHTML =  data.entries.map(entry => `
+            <div class="entrydata"> 
+                <div class="entry-meta">
+                    ${entry.category.toUpperCase()} || ${new Date(entry.timestamp).toLocaleString()}
+                </div>
+                <div>${entry.content} </div>
+                </div>
+
+            `).join("");
+
+            }catch(error){
+                entryList.innerHTML = `<p> Check if your backend is still running!!</p>`; 
+            }
+        }
+
+        window.onload = function(){
+            loadEntry();
+        };
+    </script>
+
+    </body>
+</html>

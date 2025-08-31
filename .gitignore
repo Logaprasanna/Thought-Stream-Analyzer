@@ -1,0 +1,161 @@
+# Psychic Journal .gitignore
+
+# ===== ENVIRONMENT & SECRETS =====
+.env
+.env.local
+.env.*.local
+*.env
+
+# API keys and secrets
+config.json
+secrets.json
+
+# ===== PYTHON BACKEND =====
+# Virtual environment
+venv/
+.venv/
+env/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage
+.coverage
+.pytest_cache/
+htmlcov/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# ===== DATABASE FILES =====
+# SQLite databases (comment out if you want to keep local test data)
+*.db
+*.sqlite
+*.sqlite3
+
+# Database migrations
+**/migrations/versions/
+
+# ===== FRONTEND =====
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+/build
+/dist
+*.tgz
+*.tar.gz
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# ===== VECTOR DATABASES & AI =====
+# FAISS indices
+*.faiss
+faiss_index/
+vector_store/
+
+# Chroma database
+chroma/
+chroma_db/
+
+# Model files and embeddings cache
+models/
+*.pkl
+*.pickle
+embeddings_cache/
+
+# ===== DEVELOPMENT =====
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+
+# ===== DEPLOYMENT =====
+# Docker
+Dockerfile.prod
+docker-compose.override.yml
+
+# Deployment configs
+.vercel
+.netlify
+
+# ===== PROJECT SPECIFIC =====
+# Test files
+test_data/
+sample_entries.json
+
+# Documentation builds
+docs/_build/
+
+# Backup files
+*.bak
+*.backup
+
+# Local development overrides
+local_config.py
+dev_settings.json
